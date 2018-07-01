@@ -789,3 +789,8 @@ class SQliteDataDictProvider(base.DataProvider):
                 yield [dict((cur.description[i][0], value) for i, value in enumerate(row))]
         else:
             yield
+
+class JsonDataProvider( base.DataProvider ):
+
+       def __init__( self, dataset, **kwargs ):
+           self.dataset = json.loads( "".join( dataset.readlines() ))

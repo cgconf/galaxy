@@ -16,6 +16,8 @@ from galaxy.datatypes.data import get_file_peek, Text
 from galaxy.datatypes.metadata import MetadataElement, MetadataParameter
 from galaxy.datatypes.sniff import build_sniff_from_prefix, iter_headers
 from galaxy.util import nice_size, string_as_bool
+from galaxy.datatypes import dataproviders
+from galaxy.datatypes.dataproviders.dataset import JsonDataProvider
 
 log = logging.getLogger(__name__)
 
@@ -103,6 +105,11 @@ class Json(Text):
         except Exception:
             return "JSON file (%s)" % (nice_size(dataset.get_size()))
 
+    @dataproviders.decorators.dataprovider_factory( 'raw', {} )
+    def raw_dataprovider( self, dataset ):
+        lines = dataproviders.dataset.DatasetDataProvider( dataset )
+        dataset_source = dataproviders.dataset.DatasetDataProvider( dataset )
+        yield json.loads( ''.join( lines ) )
 
 @build_sniff_from_prefix
 class Ipynb(Json):
